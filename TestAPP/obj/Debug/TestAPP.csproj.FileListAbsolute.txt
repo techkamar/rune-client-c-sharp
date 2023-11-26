@@ -1,0 +1,7 @@
+C:\Users\fairtempest\source\repos\TestAPP\TestAPP\bin\Debug\TestAPP.exe
+C:\Users\fairtempest\source\repos\TestAPP\TestAPP\bin\Debug\TestAPP.pdb
+C:\Users\fairtempest\source\repos\TestAPP\TestAPP\obj\Debug\TestAPP.csproj.AssemblyReference.cache
+C:\Users\fairtempest\source\repos\TestAPP\TestAPP\obj\Debug\TestAPP.csproj.CoreCompileInputs.cache
+C:\Users\fairtempest\source\repos\TestAPP\TestAPP\obj\Debug\TestAPP.exe
+C:\Users\fairtempest\source\repos\TestAPP\TestAPP\obj\Debug\TestAPP.pdb
+C:\Users\fairtempest\source\repos\TestAPP\TestAPP\bin\Debug\TestAPP.exe.config
