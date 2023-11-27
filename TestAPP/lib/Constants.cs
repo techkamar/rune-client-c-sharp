@@ -18,6 +18,9 @@ namespace TestAPP.lib
         public const string SLAVE_COMMAND_KEY_COMMAND = "command";
 
         public const string SLAVE_COMMAND_KEY_VALUE_SHELL = "SHELL";
+        public const string SLAVE_COMMAND_KEY_VALUE_SCREENSHOT = "SCREENSHOT";
+        public const string SLAVE_COMMAND_KEY_VALUE_FILEBROWSE = "FILEBROWSE";
+        public const string SLAVE_COMMAND_KEY_VALUE_FILEDOWNLOAD = "FILEDOWNLOAD";
 
         public const int TIME_TO_WAIT_BETWEEN_COMMANDS_MILLISECONDS = 1000;
     }
