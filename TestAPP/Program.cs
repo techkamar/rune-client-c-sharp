@@ -22,6 +22,7 @@ namespace TestAPP
             json.addStringEntry("hostname", sysInfo.hostName);
             json.addStringEntry("mac", sysInfo.macAddress);
             json.addStringEntry("os", sysInfo.operatingSystem);
+            json.addStringEntry("ostype", "WIN");
 
             return json.getParsedJSONString();
 
