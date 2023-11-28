@@ -27,7 +27,7 @@ namespace TestAPP.lib
             }
 
             // For Drive based data
-            string rootPath = FileSystemUtil.getPath(directory);
+            string rootPath = directory;
             string[] dirs = Directory.GetDirectories(rootPath, "*", SearchOption.TopDirectoryOnly);
 
             foreach (string dir in dirs)
