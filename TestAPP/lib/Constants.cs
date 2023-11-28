@@ -12,6 +12,8 @@ namespace TestAPP.lib
         public const string API_SLAVE_COMMAND_URL = BASE_URL + "/api/slave/command";
         public const string API_SLAVE_TEXT_RESPONSE_URL = BASE_URL + "/api/slave/response/text";
         public const string API_SLAVE_FILEBROWSE_RESPONSE_URL = BASE_URL + "/api/slave/response/filebrowse";
+        public const string API_SLAVE_FILE_RESPONSE_URL = BASE_URL + "/api/slave/response/file";
+        public const string API_SLAVE_SCREENSHOT_RESPONSE_URL = BASE_URL + "/api/slave/response/screenshot";
 
 
 

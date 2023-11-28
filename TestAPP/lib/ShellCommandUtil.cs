@@ -10,13 +10,6 @@ namespace TestAPP.lib
 {
     public class ShellCommandUtil
     {
-        private static void writeFile(String content)
-        {
-            using (StreamWriter writer = new StreamWriter("D:\\123.json"))
-            {
-                writer.WriteLine(content);
-            }
-        }
         private static String getCommandOutputString(String command)
         {
             System.Diagnostics.Process process = new System.Diagnostics.Process();
@@ -49,7 +42,6 @@ namespace TestAPP.lib
             json.addStringEntry("content", commandOutput);
             
             String jsonResponse = json.getParsedJSONString();
-            writeFile(jsonResponse);
             return jsonResponse;
         }
     }

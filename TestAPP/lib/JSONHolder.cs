@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -119,8 +119,25 @@ namespace TestAPP.lib
                 if (doubleQuoteCount == 4)
                 {
                     // Which means its String
-                    string[] token_array = reqd_token.Split(':');
-                    myMap.Add(token_array[0], token_array[1]);
+                    int colonCount = reqd_token.Split(':').Length - 1;
+                    Console.WriteLine("Colon Count is " + colonCount);
+                    if(colonCount == 1)
+                    {
+                        string[] token_array = reqd_token.Split(':');
+                        myMap.Add(token_array[0], token_array[1]);
+                    }
+                    else
+                    {
+                        // For cases with : in Directory names example 'C:'
+                        int posOfFirstColonCharacter = reqd_token.IndexOf(":");
+                        string key = reqd_token.Substring(0, posOfFirstColonCharacter);
+                        string value = reqd_token.Substring(posOfFirstColonCharacter + 1,
+                            reqd_token.Length - (posOfFirstColonCharacter + 1));
+                        Console.WriteLine("[+] Key is " + key);
+                        Console.WriteLine("[+] Value is " + value);
+                        myMap.Add(key, value);
+                    }
+
                 }
             }
             return myMap;
