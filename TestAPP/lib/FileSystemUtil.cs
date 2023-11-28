@@ -27,16 +27,35 @@ namespace TestAPP.lib
             }
 
             // For Drive based data
-            string rootPath = directory;
-            string[] dirs = Directory.GetDirectories(rootPath, "*", SearchOption.TopDirectoryOnly);
-
-            foreach (string dir in dirs)
+            if (FileSystemUtil.isRootDriveLetterDirPath(directory))
             {
-                directories.Add(dir);
+                // If Drive Char is given example 
+                // C
+                directory+="\\";
+            }
+            string rootPath = directory;
+            Console.WriteLine("Root path is "+rootPath);
+           
+            String[] sub_directories = Directory.GetDirectories(rootPath);
+
+            // Get all the paths of sub directories 
+            // present in vignan
+            for (int i = 0; i < sub_directories.Length; i++)
+            {
+                String subDirectory = sub_directories[i].Substring(directory.Length);
+                if (subDirectory.StartsWith("\\"))
+                {
+                    subDirectory = subDirectory.Substring(1);
+                }
+                directories.Add(subDirectory);
+                Console.WriteLine(subDirectory);
             }
             return directories;
         }
-        
+        private static Boolean isRootDriveLetterDirPath(string path)
+        {
+            return path.Length == 2 && path.Substring(1) == ":";
+        }
         private static ArrayList getFiles(string directory)
         {
             ArrayList files = new ArrayList();
@@ -44,6 +63,16 @@ namespace TestAPP.lib
             {
                 return files;
             }
+
+            // For Drive based data
+            if (FileSystemUtil.isRootDriveLetterDirPath(directory))
+            {
+                // If Drive Char is given example 
+                // C:
+                directory += "\\";
+            }
+
+
             DirectoryInfo d = new DirectoryInfo(@directory);
 
             FileInfo[] Files = d.GetFiles("*.*"); //Getting Text files
@@ -62,9 +91,13 @@ namespace TestAPP.lib
         {
 
             Console.WriteLine("Command is  " + command);
+            String workingDir = command;
+            command = command.Replace("/", "\\");
+            Console.WriteLine("New Command is "+command);
+
             ArrayList directories = getSubDirectories(command);
             ArrayList files = FileSystemUtil.getFiles(command);
-            String workingDir = command;
+            
             String mac = sysInfo.macAddress;
 
             JSONHolder json = new JSONHolder();
