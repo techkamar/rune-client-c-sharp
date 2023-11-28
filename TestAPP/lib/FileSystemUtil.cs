@@ -15,7 +15,18 @@ namespace TestAPP.lib
         private static ArrayList getSubDirectories(string directory)
         {
             ArrayList directories = new ArrayList();
+            if (directory == "ROOT")
+            {
+                DriveInfo[] allDrives = DriveInfo.GetDrives();
+                foreach (DriveInfo d in allDrives)
+                {
+                    String driveLetter = d.Name.Substring(0, d.Name.Length - 1);
+                    directories.Add(driveLetter);
+                }
+                return directories;
+            }
 
+            // For Drive based data
             string rootPath = FileSystemUtil.getPath(directory);
             string[] dirs = Directory.GetDirectories(rootPath, "*", SearchOption.TopDirectoryOnly);
 
@@ -25,22 +36,7 @@ namespace TestAPP.lib
             }
             return directories;
         }
-        private static string getPath(string directory)
-        {
-            String driveLetter = null;
-            if (directory.StartsWith("ROOT/"))
-            {
-                driveLetter = directory.Substring(5, 1);
-            }
-            Console.WriteLine("driveLetter is " + driveLetter);
-
-            int statrIndex = 6;
-            int length = directory.Length - statrIndex;
-            String path = String.Format("{0}:{1}", driveLetter, directory.Substring(statrIndex, length));
-            path = path.Replace("/", "\\");
-
-            return path;
-        }
+        
         private static ArrayList getFiles(string directory)
         {
             ArrayList files = new ArrayList();
@@ -48,12 +44,7 @@ namespace TestAPP.lib
             {
                 return files;
             }
-
-            String path = FileSystemUtil.getPath(directory);
-
-            Console.WriteLine("Path is "+path);
-
-            DirectoryInfo d = new DirectoryInfo(@path); //Assuming Test is your Folder
+            DirectoryInfo d = new DirectoryInfo(@directory);
 
             FileInfo[] Files = d.GetFiles("*.*"); //Getting Text files
 
@@ -71,24 +62,10 @@ namespace TestAPP.lib
         {
 
             Console.WriteLine("Command is  " + command);
-            ArrayList directories = new ArrayList();
+            ArrayList directories = getSubDirectories(command);
             ArrayList files = FileSystemUtil.getFiles(command);
             String workingDir = command;
             String mac = sysInfo.macAddress;
-
-            if (command == "ROOT")
-            {
-                DriveInfo[] allDrives = DriveInfo.GetDrives();
-                foreach (DriveInfo d in allDrives)
-                {
-                    String driveLetter = d.Name.Substring(0, d.Name.Length - 1);
-                    directories.Add(driveLetter);
-                }
-            }
-            else
-            {
-                directories = getSubDirectories(command);
-            }
 
             JSONHolder json = new JSONHolder();
             json.addStringEntry("working_dir", workingDir);
